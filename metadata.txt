@@ -16,8 +16,8 @@ email=mk.archaeo@gmail.com
 
 about=This plugin creates an point layer for points of archaeological findings.
 
-tracker=https://github.com/mk-archaeo/
-repository=https://github.com/mk-archaeo/
+tracker=https://github.com/mk-archaeo/mapfinds/issues
+repository=https://github.com/mk-archaeo/mapfinds
 # End of mandatory metadata
 
 # Recommended items:
