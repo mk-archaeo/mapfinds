@@ -27,6 +27,9 @@ import resources
 # Import the code for the dialog
 from map_finds_dialog import MapFindsDialog
 import os.path
+# QGIS imports
+from qgis.core import *
+import qgis.utils
 
 
 class MapFinds:
@@ -200,5 +203,28 @@ class MapFinds:
             filename = self.dlg.lineEdit.text()
             input_file = open(filename, 'r')
 
-            for line in input_file:
-                print line
+            # add virtual layers
+            layer1 = QgsVectorLayer("Multipoint?crs=epsg:31256", "Points", "memory")
+            layer2 = QgsVectorLayer("Linestring?crs=epsg:31256", "Lines", "memory")
+            layer3 = QgsVectorLayer("Polygon?crs=epsg:31256", "Polygons", "memory")
+            caps1 = layer1.dataProvider().capabilities()
+            caps2 = layer2.dataProvider().capabilities()
+            caps3 = layer3.dataProvider().capabilities()
+
+            for layer in [layer1, layer2, layer3]:
+                if not layer.isValid():
+                    print "Layer %s failed to load" % layer.name()
+                else:
+                    QgsMapLayerRegistry.instance().addMapLayer(layer)
+
+                    # adding geoms
+                    if caps1 & QgsVectorDataProvider.AddFeatures:
+                        feat = QgsFeature(layer1.pendingFields())
+                        feat.setAttributes([0, 'hello'])
+                        feat.setGeometry(QgsGeometry.fromWkt("MULTIPOINT ((123, 456), (124, 457))"))
+                        (res, outFeats) = layer1.dataProvider().addFeatures([feat])
+
+
+
+
+
