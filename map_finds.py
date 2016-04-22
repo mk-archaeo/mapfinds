@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon
+from PyQt4.QtGui import QAction, QIcon, QFileDialog
 # Initialize Qt resources from file resources.py
 import resources
 # Import the code for the dialog
@@ -67,6 +67,9 @@ class MapFinds:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'MapFinds')
         self.toolbar.setObjectName(u'MapFinds')
+
+        self.dlg.lineEdit.clear()
+        self.dlg.pushButton.clicked.connect(self.select_input_file)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -178,6 +181,10 @@ class MapFinds:
         # remove the toolbar
         del self.toolbar
 
+    def select_input_file(self):
+        filename = QFileDialog.getOpenFileName(self.dlg, "Select input file ",
+                "", "Text files (*.asc)")
+        self.dlg.lineEdit.setText(filename)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -189,4 +196,9 @@ class MapFinds:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
-            pass
+            # pass
+            filename = self.dlg.lineEdit.text()
+            input_file = open(filename, 'r')
+
+            for line in input_file:
+                print line
