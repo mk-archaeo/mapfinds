@@ -26,7 +26,7 @@ repository=https://github.com/mk-archaeo/mapfinds
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=https://github.com/mk-archaeo/
+tags=vector
 
 homepage=
 category=Plugins
