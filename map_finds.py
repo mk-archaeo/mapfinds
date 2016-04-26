@@ -21,12 +21,15 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
-from PyQt4.QtGui import QAction, QIcon
+from PyQt4.QtGui import QAction, QIcon, QFileDialog
 # Initialize Qt resources from file resources.py
 import resources
 # Import the code for the dialog
 from map_finds_dialog import MapFindsDialog
 import os.path
+# QGIS imports
+from qgis.core import *
+import qgis.utils
 
 
 class MapFinds:
@@ -67,6 +70,9 @@ class MapFinds:
         # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'MapFinds')
         self.toolbar.setObjectName(u'MapFinds')
+
+        self.dlg.lineEdit.clear()
+        self.dlg.pushButton.clicked.connect(self.select_input_file)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -178,6 +184,10 @@ class MapFinds:
         # remove the toolbar
         del self.toolbar
 
+    def select_input_file(self):
+        filename = QFileDialog.getOpenFileName(self.dlg, "Select input file ",
+                "", "Text files (*.asc)")
+        self.dlg.lineEdit.setText(filename)
 
     def run(self):
         """Run method that performs all the real work"""
@@ -189,4 +199,32 @@ class MapFinds:
         if result:
             # Do something useful here - delete the line containing pass and
             # substitute with your code.
-            pass
+            # pass
+            filename = self.dlg.lineEdit.text()
+            input_file = open(filename, 'r')
+
+            # add virtual layers
+            layer1 = QgsVectorLayer("Multipoint?crs=epsg:31256", "Points", "memory")
+            layer2 = QgsVectorLayer("Linestring?crs=epsg:31256", "Lines", "memory")
+            layer3 = QgsVectorLayer("Polygon?crs=epsg:31256", "Polygons", "memory")
+            caps1 = layer1.dataProvider().capabilities()
+            caps2 = layer2.dataProvider().capabilities()
+            caps3 = layer3.dataProvider().capabilities()
+
+            for layer in [layer1, layer2, layer3]:
+                if not layer.isValid():
+                    print "Layer %s failed to load" % layer.name()
+                else:
+                    QgsMapLayerRegistry.instance().addMapLayer(layer)
+
+                    # adding geoms
+                    if caps1 & QgsVectorDataProvider.AddFeatures:
+                        feat = QgsFeature(layer1.pendingFields())
+                        feat.setAttributes([0, 'hello'])
+                        feat.setGeometry(QgsGeometry.fromWkt("MULTIPOINT ((123, 456), (124, 457))"))
+                        (res, outFeats) = layer1.dataProvider().addFeatures([feat])
+
+
+
+
+

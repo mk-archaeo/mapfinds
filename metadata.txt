@@ -10,7 +10,7 @@
 name=Map Findings
 qgisMinimumVersion=2.0
 description=This plugin lets you create an layer of arch findings.
-version=0.1
+version=0.1.1
 author=Marco Kultus
 email=mk.archaeo@gmail.com
 
@@ -26,7 +26,7 @@ repository=https://github.com/mk-archaeo/mapfinds
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=https://github.com/mk-archaeo/
+tags=vector
 
 homepage=
 category=Plugins
